@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+    <div id="elm-root"></div>
+    <script src="/js/Go.js"></script>
+    <script>
+        var node = document.getElementById('elm-root')
+        var app = Elm.Main.embed(node, {
+            'black' : <%= black %>,
+            'url' : "<%= "ws://" + URL + ":" + Kemal.config.port.to_s %>",
+            'id' : <%= id %>,
+            'size' : <%= size %>
+        })
+    </script>
+</body>
+</html>
