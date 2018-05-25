@@ -50,7 +50,7 @@ get "/game/:id" do |env|
             black = false
         end
 
-        black.try { |black| render "src/Go/views/game.ecr"} || render_404
+        black.try { |black| render "src/Go/views/game.ecr", "src/Go/views/base.ecr"} || render_404
     else
         render_404
     end

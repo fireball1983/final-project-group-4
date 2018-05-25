@@ -1,33 +1,11 @@
-<html>
-<head>
-    <style>
-    .board-cell {
-        display: inline-block;
-        background-color: #eaeaea;
-        padding: 20px;
-    }
-    .black-cell {
-        background-color: black;
-    }
-    .white-cell {
-        background-color: white;
-    }
-    .board {
-        max-width: 360px;
-    }
-    </style>
-</head>
-<body>
-    <div id="elm-root"></div>
-    <script src="/js/Go.js"></script>
-    <script>
-        var node = document.getElementById('elm-root')
-        var app = Elm.Main.embed(node, {
-            'black' : <%= black %>,
-            'url' : "<%= "ws://" + URL + ":" + Kemal.config.port.to_s %>",
-            'id' : "<%= id %>",
-            'size' : <%= size %>
-        })
-    </script>
-</body>
-</html>
+<div id="elm-root"></div>
+<script src="/js/Go.js"></script>
+<script>
+    var node = document.getElementById('elm-root')
+    var app = Elm.Main.embed(node, {
+        'black' : <%= black %>,
+        'url' : "<%= "ws://" + URL + ":" + Kemal.config.port.to_s %>",
+        'id' : "<%= id %>",
+        'size' : <%= size %>
+    })
+</script>
