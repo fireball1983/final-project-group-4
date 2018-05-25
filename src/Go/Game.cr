@@ -14,11 +14,13 @@ module Go
 
     class Game
         property size : Size
+        property blackPass : String
+        property whitePass : String
         property board  : Board
         property turn : Color
         property sockets : Array(HTTP::WebSocket)
 
-        def initialize(size : Size)
+        def initialize(size : Size, @blackPass, @whitePass)
             @size = size
             @board = Board.new
             @turn = Color::Black
@@ -56,6 +58,7 @@ module Go
 
         def update(x, y, color)
             @board[{x, y}] = color
+            @turn = @turn == Color::Black ? Color::White : Color::Black
         end
 
         private def color_char(color)

@@ -9550,10 +9550,7 @@ var _user$project$Go_Ws$wsUrl = function (m) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
 		m.sessionUrl,
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'/game/',
-			_elm_lang$core$Basics$toString(m.sessionId)));
+		A2(_elm_lang$core$Basics_ops['++'], '/game/', m.sessionId));
 };
 var _user$project$Go_Ws$sendMove = F2(
 	function (m, c) {
@@ -9655,7 +9652,7 @@ var _user$project$Main$initDummy = {
 		_user$project$Go_Types$Model,
 		_user$project$Go_Types$Black,
 		'ws://localhost:3000',
-		1,
+		'debug',
 		9,
 		_elm_lang$core$Maybe$Nothing,
 		_elm_lang$core$Maybe$Nothing,
@@ -9698,7 +9695,7 @@ var _user$project$Main$main = _elm_lang$html$Html$programWithFlags(
 						},
 						A2(_elm_lang$core$Json_Decode$field, 'size', _elm_lang$core$Json_Decode$int));
 				},
-				A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int));
+				A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$string));
 		},
 		A2(_elm_lang$core$Json_Decode$field, 'black', _elm_lang$core$Json_Decode$bool)));
 
