@@ -3,6 +3,7 @@ require "kemal"
 require "json"
 
 URL = "localhost"
+PORT = "3000"
 GAME_CACHE = {} of String => Go::Game
 
 def query_game(db, id) : Go::Game?
