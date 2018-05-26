@@ -1,0 +1,86 @@
+body{
+    padding: 20px;
+    background-color: lightgrey;
+    height: -webkit-fill-available;
+}
+button{
+    padding: 20px;
+    background: lightgrey;
+    border-style: solid;
+    border-color: grey;    
+    width:100%;
+}
+input{
+    width:196px;
+    border-style: solid;
+    border-color: grey;
+}
+button:focus{
+    outline:none;
+}
+.playSurface{
+   width: 700px;
+   height: 700px;
+   float: left;
+   border-style: solid;
+   border-color: grey;
+    background-color: white;
+}
+.playerstats{
+    background-color: #7ea7ab;
+    width: 200px;
+    height: 700px;
+    float: left;
+    margin-left: 20px;
+    padding:5px;
+}
+.cross{
+    width: 100px;
+    height: 100px;
+    float: left;
+    background-image: url("cross.svg");
+    background-color: white;
+    border-radius:0%;
+    transition: 1s;
+    text-align: center;
+    /*background-image: url("cross.jpg");*/
+}
+.cross:hover{
+    background-color: #7ea7ab;
+    border-radius: 50%;
+    transition: border-radius 2s;
+    /*transition: border-radius 2s;*/
+}
+.cross:focus{
+    background-color: #7ea7ab;
+    border-radius:50%;
+    transition: border-radius .2s;
+}
+/*
+.chipWhite:focus{
+    transform: scale(2.5);
+    transition: transform 2s;
+}*/
+.chipBlack, .chipWhite{
+    width: 25%;
+    height: 25%;
+    border-radius: 50%;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    margin: auto;
+    margin-top:33%;
+}
+.chipBlack{
+    background-color: black;
+}
+.chipWhite{
+    background-color: white;
+}
+.crossb{
+    width: 25px;
+    height: 20px;
+    border-color: black;
+    border-style: solid;
+    float: left;
+}
