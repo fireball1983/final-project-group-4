@@ -90,7 +90,11 @@ post "/create" do |env|
         end
         game = Go::Game.new(Go::Size::Small, black_pass, white_pass)
         create_game(nil, GAME_CACHE, game, game_id.as(String))   
-        "Created!"
+
+        id = game_id
+        size = game.size.value
+        black = color_e == Go::Color::Black
+        render "src/Go/views/game.ecr", "src/Go/views/base.ecr"
     end
 end
 
