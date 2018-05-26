@@ -9504,7 +9504,18 @@ var _user$project$Go_View$renderIndex = function (_p0) {
 				_1: {ctor: '[]'}
 			}
 		},
-		{ctor: '[]'});
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('overlay'),
+					_1: {ctor: '[]'}
+				},
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Go_View$renderBoard = F2(
 	function (size, board) {

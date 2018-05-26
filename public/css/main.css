@@ -1,0 +1,55 @@
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Indie Flower", serif; }
+
+h1 {
+  font-size: 5em;
+  margin: 0px;
+  text-align: center; }
+
+body {
+  font-family: "Raleway", sans-serif;
+  margin: 0px;
+  background-color: #f4f4f4; }
+
+.content-wrapper {
+  max-width: 750px;
+  margin: auto; }
+
+.board {
+  background-color: tomato;
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+  border-radius: 10px; }
+
+.black-player .overlay:hover {
+  background-color: black; }
+
+.white-player .overlay:hover {
+  background-color: white; }
+
+.board-cell {
+  display: inline-block;
+  position: relative;
+  padding: 5.55556%; }
+  .board-cell .overlay {
+    position: absolute;
+    box-sizing: border-box;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    transition: background-color .25s; }
+  .board-cell.small {
+    padding: 5.55556%; }
+  .board-cell.medium {
+    padding: 3.84615%; }
+  .board-cell.large {
+    padding: 2.63158%; }
+
+.black-cell .overlay {
+  background-color: black; }
+
+.white-cell .overlay {
+  background-color: white; }
