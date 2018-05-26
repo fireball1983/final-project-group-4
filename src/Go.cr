@@ -117,6 +117,4 @@ ws "/game/:id" do |socket, env|
     end
 end
 
-GAME_CACHE["debug"] = Go::Game.new(Go::Size::Small, "black", "white")
-
 Kemal.run
