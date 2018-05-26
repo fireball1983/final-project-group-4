@@ -9648,13 +9648,8 @@ var _user$project$Main$view = function (m) {
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text(
-				_elm_lang$core$Basics$toString(m.board)),
-			_1: {
-				ctor: '::',
-				_0: A2(_user$project$Go_View$renderBoard, m.sessionSize, m.board),
-				_1: {ctor: '[]'}
-			}
+			_0: A2(_user$project$Go_View$renderBoard, m.sessionSize, m.board),
+			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Main$initDummy = {
