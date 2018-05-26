@@ -9326,22 +9326,6 @@ var _user$project$Go_Util$zip = F2(
 			return {ctor: '[]'};
 		}
 	});
-var _user$project$Go_Util$allIndices = function (n) {
-	var pairs = F2(
-		function (xs, i) {
-			return A2(
-				_elm_lang$core$List$map,
-				function (x) {
-					return {ctor: '_Tuple2', _0: i, _1: x};
-				},
-				xs);
-		});
-	var vals = A2(_elm_lang$core$List$range, 0, n - 1);
-	return A2(
-		_elm_lang$core$List$concatMap,
-		pairs(vals),
-		vals);
-};
 var _user$project$Go_Util$lookup = F2(
 	function (val, list) {
 		return A2(
@@ -9351,8 +9335,10 @@ var _user$project$Go_Util$lookup = F2(
 				A2(
 					_elm_lang$core$List$filter,
 					function (_p1) {
-						var _p2 = _p1;
-						return _elm_lang$core$Native_Utils.eq(_p2._0, val);
+						return function (a) {
+							return _elm_lang$core$Native_Utils.eq(a, val);
+						}(
+							_elm_lang$core$Tuple$first(_p1));
 					},
 					list)));
 	});
@@ -9360,6 +9346,20 @@ var _user$project$Go_Util$pair = F2(
 	function (a1, a2) {
 		return {ctor: '_Tuple2', _0: a1, _1: a2};
 	});
+var _user$project$Go_Util$allIndices = function (n) {
+	var pairs = F2(
+		function (xs, i) {
+			return A2(
+				_elm_lang$core$List$map,
+				_user$project$Go_Util$pair(i),
+				xs);
+		});
+	var vals = A2(_elm_lang$core$List$range, 0, n - 1);
+	return A2(
+		_elm_lang$core$List$concatMap,
+		pairs(vals),
+		vals);
+};
 
 var _user$project$Go_Decoders$decodeColor = function () {
 	var tryDecode = function (s) {
@@ -9522,10 +9522,11 @@ var _user$project$Go_View$renderBoard = F2(
 		var cells = A2(
 			_elm_lang$core$List$map,
 			function (i) {
-				return A2(
-					_user$project$Go_Util$pair,
-					i,
-					A2(_user$project$Go_Util$lookup, i, board));
+				return {
+					ctor: '_Tuple2',
+					_0: i,
+					_1: A2(_user$project$Go_Util$lookup, i, board)
+				};
 			},
 			_user$project$Go_Util$allIndices(size));
 		return A2(

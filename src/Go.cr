@@ -33,7 +33,7 @@ def handle_message(id, game, socket, message)
         color = split_command[3] == "Black" ? Go::Color::Black : Go::Color::White
 
         game.update(x, y, color)
-        game.sockets.each { |socket| socket.send game.to_string }
+        game.sockets.each { |socket| socket.send game.to_json }
     end
 end
 
@@ -51,9 +51,9 @@ post "/game" do |env|
         size = game.size.value
         black = nil
 
-        if game_password == game.blackPass
+        if game_password == game.black_pass
             black = true
-        elsif game_password == game.whitePass
+        elsif game_password == game.white_pass
             black = false
         end
 
@@ -102,7 +102,7 @@ end
 ws "/game/:id" do |socket, env|
     game_id = env.params.url["id"]
     if game = lookup_game(nil, GAME_CACHE, game_id)
-        socket.send game.to_string
+        socket.send game.to_json
         game.sockets << socket
 
         socket.on_message do |message|

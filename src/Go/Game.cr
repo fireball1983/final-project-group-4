@@ -14,13 +14,13 @@ module Go
 
     class Game
         property size : Size
-        property blackPass : String
-        property whitePass : String
+        property black_pass : String
+        property white_pass : String
         property board  : Board
         property turn : Color
         property sockets : Array(HTTP::WebSocket)
 
-        def initialize(size : Size, @blackPass, @whitePass)
+        def initialize(size : Size, @black_pass, @white_pass)
             @size = size
             @board = Board.new
             @turn = Color::Black
@@ -47,7 +47,7 @@ module Go
             end
         end
 
-        def to_string
+        def to_json
             JSON.build do |json|
                 json.object do
                     json.field "turn", @turn.to_s
@@ -57,11 +57,12 @@ module Go
         end
 
         private def count_neighbors(x, y, color, visited)
-            if visited.includes?({x, y}) || (x < 0 || x >= @size.value || y < 0 || y >= @size.value)
+            coord = {x, y}
+            if visited.includes?(coord) || (x < 0 || x >= @size.value || y < 0 || y >= @size.value)
                 return 0
             else
-                visited.push({x, y})
-                case @board[{x, y}]?
+                visited.push(coord)
+                case @board[coord]?
                 when color
                     return count_neighbors(x - 1, y, color, visited) + 
                         count_neighbors(x + 1, y, color, visited) +
@@ -77,8 +78,9 @@ module Go
         end
 
         private def remove_color(x, y, color)
-            if !(x < 0 || x >= @size.value || y < 0 || y >= @size.value) && @board[{x, y}]? == color
-                @board.delete({x, y})
+            coord = {x, y}
+            if !(x < 0 || x >= @size.value || y < 0 || y >= @size.value) && @board[coord]? == color
+                @board.delete(coord)
                 remove_color(x - 1, y, color)
                 remove_color(x + 1, y, color)
                 remove_color(x, y - 1, color)
@@ -87,7 +89,8 @@ module Go
         end
 
         private def try_remove_branch(x, y, color)
-            if @board[{x, y}]? == color
+            coord = {x, y}
+            if @board[coord]? == color
                 neighbor_count = count_neighbors(x, y, color, [] of Tuple(Int8, Int8))
                 if neighbor_count == 0
                     remove_color(x, y, color)
@@ -100,8 +103,9 @@ module Go
         end
 
         def update(x, y, color)
+            coord = {x, y}
             if @turn == color
-                @board[{x, y}] = color
+                @board[coord] = color
                 new_color = invert(color)
                 try_remove_branch(x - 1, y, new_color)
                 try_remove_branch(x + 1, y, new_color)
