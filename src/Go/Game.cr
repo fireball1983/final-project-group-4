@@ -56,9 +56,60 @@ module Go
             end
         end
 
+        private def count_neighbors(x, y, color, visited)
+            if visited.includes?({x, y}) || (x < 0 || x >= @size.value || y < 0 || y >= @size.value)
+                return 0
+            else
+                visited.push({x, y})
+                case @board[{x, y}]?
+                when color
+                    return count_neighbors(x - 1, y, color, visited) + 
+                        count_neighbors(x + 1, y, color, visited) +
+                        count_neighbors(x, y - 1, color, visited) +
+                        count_neighbors(x, y + 1, color, visited)
+                when nil
+                    return 1
+                else
+                    return 0
+                end
+            end
+            return 0
+        end
+
+        private def remove_color(x, y, color)
+            if !(x < 0 || x >= @size.value || y < 0 || y >= @size.value) && @board[{x, y}]? == color
+                @board.delete({x, y})
+                remove_color(x - 1, y, color)
+                remove_color(x + 1, y, color)
+                remove_color(x, y - 1, color)
+                remove_color(x, y + 1, color)
+            end
+        end
+
+        private def try_remove_branch(x, y, color)
+            if @board[{x, y}]? == color
+                neighbor_count = count_neighbors(x, y, color, [] of Tuple(Int8, Int8))
+                if neighbor_count == 0
+                    remove_color(x, y, color)
+                end
+            end
+        end
+
+        def invert(color)
+            color == Color::Black ? Color::White : Color::Black
+        end
+
         def update(x, y, color)
-            @board[{x, y}] = color
-            @turn = @turn == Color::Black ? Color::White : Color::Black
+            if @turn == color
+                @board[{x, y}] = color
+                new_color = invert(color)
+                try_remove_branch(x - 1, y, new_color)
+                try_remove_branch(x + 1, y, new_color)
+                try_remove_branch(x, y - 1, new_color)
+                try_remove_branch(x, y + 1, new_color)
+                try_remove_branch(x, y, color)
+                @turn = new_color
+            end
         end
 
         private def color_char(color)
