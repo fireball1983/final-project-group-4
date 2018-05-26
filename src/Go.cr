@@ -19,6 +19,10 @@ def lookup_game(db, cache, id) : Go::Game?
     end
 end
 
+def create_game(db, cache, game, id)
+    cache[id] = game
+end
+
 def handle_message(id, game, socket, message)
     split_command = message.split(" ")
     command = split_command[0]
@@ -36,10 +40,12 @@ get "/" do |env|
     render "src/Go/views/index.ecr", "src/Go/views/base.ecr"
 end
 
-get "/game/:id" do |env|
-    game_id = env.params.url["id"]
-    game_password = env.params.query["password"]?
-    if game = lookup_game(nil, GAME_CACHE, game_id)
+post "/game" do |env|
+    game_id = env.params.body["id"]?
+    game_password = env.params.body["password"]?
+    if game_id == nil || game_password == nil
+        render_404
+    elsif game = lookup_game(nil, GAME_CACHE, game_id)
         id = game_id
         size = game.size.value
         black = nil
@@ -53,6 +59,38 @@ get "/game/:id" do |env|
         black.try { |black| render "src/Go/views/game.ecr", "src/Go/views/base.ecr"} || render_404
     else
         render_404
+    end
+end
+
+post "/create" do |env|
+    game_id = env.params.body["id"]?
+    user_password = env.params.body["your-password"]?
+    other_password = env.params.body["their-password"]?
+    color = env.params.body["color"]?
+
+    color_e = nil
+    if color == "black"
+        color_e = Go::Color::Black
+    elsif color == "white"
+        color_e = Go::Color::White
+    end
+
+    if game_id == nil || user_password == nil || other_password == nil || color == nil || color_e == nil
+        render_404
+    elsif game = lookup_game(nil, GAME_CACHE, game_id)
+        render_404
+    else
+        color_e = color_e.as(Go::Color)
+        user_password = user_password.as(String)
+        other_password = other_password.as(String)
+        if color_e == Go::Color::Black
+            white_pass, black_pass = other_password, user_password
+        else
+            white_pass, black_pass = user_password, other_password
+        end
+        game = Go::Game.new(Go::Size::Small, black_pass, white_pass)
+        create_game(nil, GAME_CACHE, game, game_id.as(String))   
+        "Created!"
     end
 end
 
