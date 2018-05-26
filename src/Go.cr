@@ -33,7 +33,7 @@ def handle_message(id, game, socket, message)
 end
 
 get "/" do |env|
-    "Hello!"
+    render "src/Go/views/index.ecr", "src/Go/views/base.ecr"
 end
 
 get "/game/:id" do |env|

@@ -1,0 +1,29 @@
+<div class="split-wrapper">
+    <div class="split-item">
+        <h2>Create Game</h2>
+        <form autocomplete="off" id="create-form" action="/create">
+            <input required placeholder="Session Name" type="text" name="id"></input>
+            <input required placeholder="Your Password" type="text" name="your-password"></input>
+            <input required placeholder="Their Password" type="text" name="their-password"></input>
+            <div class="radio-parent">
+                <div class="radio-wrapper">
+                    <input type="radio" name="color" id="radio-black" value="black" checked></input>
+                    <label for="radio-black">Black</label>
+                </div>
+                <div class="radio-wrapper">
+                    <input type="radio" name="color" id="radio-white" value="white"></input>
+                    <label for="radio-white">White</label>
+                </div>
+            </div>
+            <input type="submit" value="Create Game"></input>
+        </form>
+    </div>
+    <div class="split-item">
+        <h2>Join Game</h2>
+        <form autocomplete="off" id="join-form" action="/game">
+            <input required placeholder="Session Name" type="text" name="id"></input>
+            <input required placeholder="Your Password" type="text" name="password"></input>
+            <input type="submit" value="Join Game"></input>
+        </form>
+    </div>
+</div>

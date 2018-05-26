@@ -1,10 +1,10 @@
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Indie Flower", serif; }
+  font-family: "Indie Flower", serif;
+  text-align: center; }
 
 h1 {
   font-size: 5em;
-  margin: 0px;
-  text-align: center; }
+  margin: 0px; }
 
 body {
   font-family: "Raleway", sans-serif;
@@ -53,3 +53,63 @@ body {
 
 .white-cell .overlay {
   background-color: white; }
+
+.split-wrapper {
+  display: flex;
+  width: 100%; }
+  @media screen and (max-width: 640px) {
+    .split-wrapper {
+      flex-direction: column; } }
+
+.split-item {
+  flex-grow: 1;
+  box-sizing: border-box; }
+
+.split-wrapper form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px; }
+  .split-wrapper form input {
+    margin-top: 20px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: none;
+    outline: none;
+    width: 100%;
+    max-width: 300px; }
+  .split-wrapper form input[type="radio"] {
+    opacity: 0;
+    width: 0px;
+    height: 0px; }
+    .split-wrapper form input[type="radio"]:checked ~ label {
+      color: tomato;
+      transition: color .25s; }
+  .split-wrapper form input[type="submit"] {
+    padding: 10px;
+    background-color: tomato;
+    color: white; }
+    .split-wrapper form input[type="submit"]:focus, .split-wrapper form input[type="submit"]:hover {
+      background-color: inherit;
+      color: tomato;
+      transition: background-color .25s, color .25s; }
+  .split-wrapper form input[type="text"] {
+    background-color: inherit;
+    border-bottom: solid tomato;
+    border-width: 2px;
+    height: 3em;
+    box-sizing: border-box;
+    display: block; }
+    .split-wrapper form input[type="text"]:focus {
+      border-width: 3px;
+      transition: background-color .25s, border-width .25s; }
+  .split-wrapper form .radio-parent {
+    display: flex;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px; }
+  .split-wrapper form .radio-wrapper {
+    flex-grow: 1;
+    display: inline-block;
+    text-align: center; }
