@@ -33,14 +33,14 @@ body {
     border-radius: 10px;
 }
 
-.black-player .overlay {
-    &:hover {
+.black-player {
+    .board-cell:hover .overlay {
         background-color: black;
     }
 }
 
-.white-player .overlay {
-    &:hover {
+.white-player {
+    .board-cell:hover .overlay {
         background-color: white;
     }
 }
