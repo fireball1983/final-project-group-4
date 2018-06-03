@@ -9,7 +9,7 @@ ___
 TODO: Write installation instructions for Mac
 ___
 Arch Linux: 
-1. Install dependencies: `pacman -S crystal, shards, ruby-sass`
+1. Install dependencies: `pacman -S crystal shards ruby-sass`
 2. Install Shards: `shards install`
 3. TODO: Add elm compilation
 4. Compile SASS Style: `make generate-css`
