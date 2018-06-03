@@ -37,4 +37,4 @@ TODO: Write development instructions here
 
 - [[your-github-name]](https://github.com/[your-github-name]) Danila Fedorin - creator, maintainer
 
-- [sessionm21](https://github.com/sessionm) Matthew Sessions - hax0r, maintainer
+- [sessionm21](https://github.com/sessionm21) Matthew Sessions - hax0r, maintainer
