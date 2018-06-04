@@ -2,11 +2,41 @@ require "./Go/*"
 require "kemal"
 require "json"
 
+require "db"
+require "sqlite3"
+
 URL = "localhost"
 PORT = "3000"
 GAME_CACHE = {} of String => Go::Game
 
-def query_game(db, id) : Go::Game?
+
+def save_game(db, gameid, game)
+    puts "Saving"
+    puts game.encode
+    turn, size, board = game.encode
+    DB.open "sqlite3:./game_saves.db" do |db|
+        # When using the pg driver, use $1, $2, etc. instead of ?
+        #db.exec "create table game_saves (gameid integer, turn integer, size integer, board string )"
+        db.exec "insert into game_saves values (?, ?, ?, ?)", gameid, turn, size, board
+    end
+end
+
+def query_game(db, gameid) : Go::Game?
+
+    DB.open "sqlite3:./game_saves.db" do |db|
+        puts "contacts:"
+        db.query "select gameid, turn, size, board from game_saves order by gameid desc" do |rs|
+            rs.each do
+                puts rs.size
+                #puts "#{rs.read(Int32)} (#{rs.read(Int32)}) (#{rs.read(Int32)}) (#{rs.read(String)})"
+            end
+            puts rs
+          # puts "#{rs.column_name(0)} (#{rs.column_name(1)})"
+          #rs.each do
+            #puts "#{rs.read(String)} (#{rs.read(Int32)})"
+          #end
+        end
+      end
     return nil
 end
 
@@ -39,6 +69,11 @@ end
 
 get "/" do |env|
     render "src/Go/views/index.ecr", "src/Go/views/base.ecr"
+end
+
+get "/save" do |env|
+    #game = Go::Game.new(Go::Size::Small, "asdf", "sadfasdf")
+    #save_game(db, 0, game)
 end
 
 post "/game" do |env|
@@ -117,4 +152,14 @@ ws "/game/:id" do |socket, env|
     end
 end
 
+def test_save()
+    puts "test"
+    game = Go::Game.new(Go::Size::Small, "asdf", "sadfasdf")
+    
+    save_game("none", 1, game)
+    query_game("none", 1)
+end
+
+
+test_save()
 Kemal.run
