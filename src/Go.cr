@@ -13,30 +13,47 @@ GAME_CACHE = {} of String => Go::Game
 def save_game(db, gameid, game)
     puts "Saving"
     puts game.encode
-    turn, size, board = game.encode
+    turn, size, white_pass, black_pass, board = game.encode
     DB.open "sqlite3:./game_saves.db" do |db|
-        # When using the pg driver, use $1, $2, etc. instead of ?
-        #db.exec "create table game_saves (gameid integer, turn integer, size integer, board string )"
-        db.exec "insert into game_saves values (?, ?, ?, ?)", gameid, turn, size, board
+        # TODO: Table creation function
+        # Creates table
+        db.exec "create table game_saves (gameid integer, turn integer, size integer, white_pass string, black_pass string, board string )"
+        db.exec "insert into game_saves values (?, ?, ?, ?, ?, ?)", gameid, turn.value, size, white_pass, black_pass, board
     end
 end
 
 def query_game(db, gameid) : Go::Game?
+    size       = Go::Size::Small 
+    white_pass = ""
+    black_pass = ""
+    board      = ""
+    turn       = ""
 
     DB.open "sqlite3:./game_saves.db" do |db|
-        puts "contacts:"
-        db.query "select gameid, turn, size, board from game_saves order by gameid desc" do |rs|
+        puts "Saves:"
+        db.query "select gameid, turn, size, white_pass, black_pass, board from game_saves where gameid = #{gameid}" do |rs|
             rs.each do
-                puts rs.size
-                #puts "#{rs.read(Int32)} (#{rs.read(Int32)}) (#{rs.read(Int32)}) (#{rs.read(String)})"
+                id         = rs.read(Int32)
+
+                turn       = rs.read(Int32)
+                size       = rs.read(Int32)
+                white_pass = rs.read(String)
+                black_pass = rs.read(String)
+                board      = rs.read(String)
+                puts turn
             end
-            puts rs
-          # puts "#{rs.column_name(0)} (#{rs.column_name(1)})"
-          #rs.each do
-            #puts "#{rs.read(String)} (#{rs.read(Int32)})"
-          #end
         end
       end
+
+    game            = Go::Game.new()
+    game.size       = Go::Size.from_value(size)
+    game.white_pass = white_pass
+    game.black_pass = black_pass
+    # Todo: Parse game board string
+    # game.board      = 
+    game.turn       = Go::Color.from_value(turn)
+    # Todo: Fix return type mismatch
+    # return game
     return nil
 end
 

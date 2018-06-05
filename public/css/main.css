@@ -31,7 +31,7 @@ body {
 .board-cell {
   display: inline-block;
   position: relative;
-  padding: 5.55556%; }
+  padding: 5.5555555556%; }
   .board-cell .overlay {
     position: absolute;
     box-sizing: border-box;
@@ -42,11 +42,11 @@ body {
     border-radius: 50%;
     transition: background-color .25s; }
   .board-cell.small {
-    padding: 5.55556%; }
+    padding: 5.5555555556%; }
   .board-cell.medium {
-    padding: 3.84615%; }
+    padding: 3.8461538462%; }
   .board-cell.large {
-    padding: 2.63158%; }
+    padding: 2.6315789474%; }
 
 .black-cell .overlay {
   background-color: black; }
