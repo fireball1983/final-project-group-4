@@ -22,6 +22,15 @@ def save_game(db, gameid, game)
     end
 end
 
+def save_all()
+    # Function: save_all
+    # Parameters: None
+    GAME_CACHE.each do |game_hash|
+        gameid, game = game_hash
+        save_game("none", gameid, game) 
+    end
+end
+
 def query_game(db, gameid) : Go::Game?
     # Function: query_game
     # Parameters: db(String)[Unused] gameid(String)
@@ -196,4 +205,12 @@ ws "/game/:id" do |socket, env|
     end
 end
 
+spawn do
+    loop do
+        sleep 10.minute
+        puts "Saving"
+        save_all()
+    end
+end
+Fiber.yield
 Kemal.run
