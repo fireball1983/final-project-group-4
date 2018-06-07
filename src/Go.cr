@@ -16,7 +16,8 @@ def save_game(db, gameid, game)
     turn, size, white_pass, black_pass, board = game.encode
     DB.open "sqlite3:./#{GAME_SAVE}" do |db|
         # Create table if one does not exist, gameid is UNIQUE => No duplicates
-        db.exec "create table if not exists game_saves (gameid string, turn integer, size integer, white_pass string, black_pass string, board string, UNIQUE(gameid) )"
+        # db.exec "create table if not exists game_saves (gameid string, turn integer, size integer, white_pass string, black_pass string, time string, board string, UNIQUE(gameid) )"
+        db.exec "create table if not exists game_saves (gameid string, turn integer, size integer, white_pass string, black_pass string,  board string, UNIQUE(gameid) )"
         # If duplicate => replace values, else => make new row for gameid
         db.exec "insert or replace into game_saves values (?, ?, ?, ?, ?, ?)", gameid, turn.value, size, white_pass, black_pass, board
     end
@@ -63,8 +64,8 @@ def query_game(db, gameid) : Go::Game?
         counter = 0
         # For each character in the board String
         board.each_char do |char|
-            x = counter % 9
-            y = counter / 9
+            x = counter / 9
+            y = counter % 9
             coord = {x.to_i8, y.to_i8}
             if(char == 'B')
                 game.board[coord] = Go::Color::Black
@@ -104,7 +105,6 @@ end
 def handle_message(id, game, socket, message)
     # Function: handle_message
     # Parameters: id(String) game(Go::Game) socket() message()
-    
     split_command = message.split(" ")
     command = split_command[0]
     if command == "place"
@@ -114,6 +114,9 @@ def handle_message(id, game, socket, message)
 
         game.update(x, y, color)
         game.sockets.each { |socket| socket.send game.to_json }
+
+        # If saving game on move
+        save_game("none", id, game)
     end
 end
 
@@ -125,6 +128,13 @@ get "/save" do |env|
     GAME_CACHE.each do |game_hash|
         gameid, game = game_hash
         save_game("none", gameid, game) 
+    end
+end
+get "/state" do |env|
+    GAME_CACHE.each do |game_hash|
+        gameid, game = game_hash
+        puts gameid
+        puts game.board
     end
 end
 
@@ -205,12 +215,16 @@ ws "/game/:id" do |socket, env|
     end
 end
 
-spawn do
-    loop do
-        sleep 10.minute
-        puts "Saving"
-        save_all()
-    end
-end
-Fiber.yield
+# For timed-autosave
+# spawn do
+#     loop do
+#         sleep 10.minute
+#         save_all()
+#     end
+# end
 Kemal.run
+# If exit is disabled in kemal.stop
+#at_exit do
+#    save_all()
+#    puts "Saved"
+#end
