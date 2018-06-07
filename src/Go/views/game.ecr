@@ -1,0 +1,11 @@
+<div id="elm-root" class="<%= black ? "black" : "white" %>-player"></div>
+<script src="/js/Go.js"></script>
+<script>
+    var node = document.getElementById('elm-root')
+    var app = Elm.Main.embed(node, {
+        'black' : <%= black %>,
+        'url' : "<%= "ws://" + URL + ":" + PORT %>",
+        'id' : "<%= id %>",
+        'size' : <%= size %>
+    })
+</script>

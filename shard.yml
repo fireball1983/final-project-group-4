@@ -1,0 +1,21 @@
+name: Go
+version: 0.1.0
+
+authors:
+  - Danila Fedorin <danila.fedorin@gmail.com>
+
+targets:
+  Go:
+    main: src/Go.cr
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+  db:
+    github: crystal-lang/crystal-db
+  sqlite3:
+    github: crystal-lang/crystal-sqlite3
+
+crystal: 0.24.2
+
+license: MIT

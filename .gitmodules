@@ -1,0 +1,3 @@
+[submodule "external/GoUI"]
+	path = external/GoUI
+	url = https://dev.danilafe.com/CS-290/GoUI.git
