@@ -11,49 +11,52 @@ GAME_CACHE = {} of String => Go::Game
 GAME_SAVE  = "./game_saves.db"
 
 def save_game(db, gameid, game)
-    # Function: save_game
+    # Function:   save_game
     # Parameters: db(String)[Unused] gameid(String) game(Go::Game)
+    # Returns:    None
     turn, size, white_pass, black_pass, board = game.encode
     DB.open "sqlite3:./#{GAME_SAVE}" do |db|
         # Create table if one does not exist, gameid is UNIQUE => No duplicates
-        # db.exec "create table if not exists game_saves (gameid string, turn integer, size integer, white_pass string, black_pass string, time string, board string, UNIQUE(gameid) )"
-        db.exec "create table if not exists game_saves (gameid string, turn integer, size integer, white_pass string, black_pass string,  board string, UNIQUE(gameid) )"
+        db.exec "create table if not exists game_saves (gameid string, turn integer, size integer, white_pass string, black_pass string, time string,  board string, UNIQUE(gameid) )"
         # If duplicate => replace values, else => make new row for gameid
-        db.exec "insert or replace into game_saves values (?, ?, ?, ?, ?, ?)", gameid, turn.value, size, white_pass, black_pass, board
+        db.exec "insert or replace into game_saves values (?, ?, ?, ?, ?, ?, ?)", 
+            gameid, turn.value, size, white_pass, black_pass, Time.now.to_json, board
     end
 end
 
-def save_all()
-    # Function: save_all
-    # Parameters: None
-    GAME_CACHE.each do |game_hash|
+def save_all(cache)
+    # Function:   save_all
+    # Parameters: cache({(String),(Go::Game)})
+    # Returns:    None
+    cache.each do |game_hash|
         gameid, game = game_hash
         save_game("none", gameid, game) 
     end
 end
 
 def query_game(db, gameid) : Go::Game?
-    # Function: query_game
+    # Function:   query_game
     # Parameters: db(String)[Unused] gameid(String)
+    # Returns:    (Go::Game) for a given gameid
     turn       = 0
     size       = Go::Size::Small 
     white_pass = ""
     black_pass = ""
     board      = ""
     begin 
-    DB.open "sqlite3:./#{GAME_SAVE}" do |db|
-        # Query whole row where the gameid is found
-        db.query "SELECT * FROM game_saves WHERE gameid = ?", gameid do |rs|
-            rs.each do
-                id         = rs.read(String) # Reduntant
-                turn       = rs.read(Int32)
-                size       = rs.read(Int32)
-                white_pass = rs.read(String)
-                black_pass = rs.read(String)
-                board      = rs.read(String)
+        DB.open "sqlite3:./#{GAME_SAVE}" do |db|
+            # Query whole row where the gameid is found
+            db.query "SELECT turn,size,white_pass,black_pass,board FROM game_saves WHERE gameid = ?", gameid do |rs|
+                rs.each do
+                    #id         = rs.read(String) # Reduntant
+                    turn       = rs.read(Int32)
+                    size       = rs.read(Int32)
+                    white_pass = rs.read(String)
+                    black_pass = rs.read(String)
+                    board      = rs.read(String)
+                end
             end
         end
-      end
         # New Go::Game object
         game            = Go::Game.new()
         game.size       = Go::Size.from_value(size)
@@ -76,16 +79,50 @@ def query_game(db, gameid) : Go::Game?
         end
     rescue
         # Catch bad query
-        puts "DB query Failed"
+        # puts "DB query Failed"
         return nil
     end
     # Finished Go::Game object to return
     return game
 end
 
+def game_cleaner(cache)
+    # Function:    game_cleaner
+    # Parameters:  cache({(String),(Go::Game)})
+    # Returns:     None
+    # Description: Cleans the database and memory of games older than 24 hours, every 2 hours
+    spawn do
+        loop do
+            gameid = ""
+            ntime  = Time.now()
+            DB.open "sqlite3:./#{GAME_SAVE}" do |db|
+                # Time span, for the subtraction of two time objects
+                tspan = Time::Span.new(0,0,0)
+                db.query "SELECT time, gameid FROM game_saves" do |rs|
+                    rs.each do
+                        stime  = Time.from_json(rs.read(String))
+                        gameid = rs.read(String)
+                        tspan  = ntime - stime
+                    end
+                end
+                if( tspan.hours > 24 || tspan.days > 0 )
+                    # Delete game from database
+                    db.exec("DELETE FROM game_saves WHERE gameid = ?", gameid)
+                    # Delete game from memory
+                    cache.delete(gameid)
+                    puts "Game: #{gameid} deleted due to inactivity"
+                end
+            end
+            sleep 2.hour
+        end
+    end
+end
+
 def lookup_game(db, cache, id) : Go::Game?
-    # Function: lookup_game
-    # Parameters: db(String)[Unused] cache({(String), (Go::Game)}) id(String)
+    # Function:    lookup_game
+    # Parameters:  db(String)[Unused] cache({(String), (Go::Game)}) id(String)
+    # Returns:     None
+    # Description: Loads game data from memory, then attempts load from database
     if game = cache[id]?
         return game
     else
@@ -97,14 +134,17 @@ def lookup_game(db, cache, id) : Go::Game?
 end
 
 def create_game(db, cache, game, id)
-    # Function: create_game
+    # Function:   create_game
     # Parameters: db(String)[Unused] cache({(String), (Go::Game)}) game(Go::Game) id(String)
+    # Returns:    None
     cache[id] = game
 end
 
 def handle_message(id, game, socket, message)
-    # Function: handle_message
-    # Parameters: id(String) game(Go::Game) socket() message()
+    # Function:    handle_message
+    # Parameters:  id(String) game(Go::Game) socket(WebSocket) message(String)
+    # Returns:     None
+    # Description: Handle placement messages from the WebSocket
     split_command = message.split(" ")
     command = split_command[0]
     if command == "place"
@@ -123,21 +163,6 @@ end
 get "/" do |env|
     render "src/Go/views/index.ecr", "src/Go/views/base.ecr"
 end
-
-get "/save" do |env|
-    GAME_CACHE.each do |game_hash|
-        gameid, game = game_hash
-        save_game("none", gameid, game) 
-    end
-end
-get "/state" do |env|
-    GAME_CACHE.each do |game_hash|
-        gameid, game = game_hash
-        puts gameid
-        puts game.board
-    end
-end
-
 
 post "/game" do |env|
     game_id = env.params.body["id"]?
@@ -219,12 +244,13 @@ end
 # spawn do
 #     loop do
 #         sleep 10.minute
-#         save_all()
+#         save_all(GAME_CACHE)
 #     end
 # end
+game_cleaner(GAME_CACHE)
 Kemal.run
 # If exit is disabled in kemal.stop
-#at_exit do
-#    save_all()
-#    puts "Saved"
-#end
+# For save on close
+# at_exit do
+#     save_all(GAME_CACHE)
+# end
