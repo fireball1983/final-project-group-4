@@ -3,3 +3,4 @@
 /bin/
 /.shards/
 game_saves.db
+.sass-cache*
