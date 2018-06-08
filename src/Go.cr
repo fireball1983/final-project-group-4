@@ -11,15 +11,20 @@ GAME_CACHE = {} of String => Go::Game
 GAME_SAVE  = "./game_saves.db"
 GAME_DB = DB.open "sqlite3:./#{GAME_SAVE}"
 
+def make_table(db)
+    # Function:   make_table
+    # Parameters: db(Sqlite)
+    # Returns:    None
+    db.exec "create table if not exists game_saves (
+        gameid string, turn integer, size integer, white_pass string, 
+        black_pass string, time string,  board string, UNIQUE(gameid) )"
+end
+
 def save_game(db, gameid, game)
     # Function:   save_game
     # Parameters: db(Sqlite) gameid(String) game(Go::Game)
     # Returns:    None
     turn, size, white_pass, black_pass, board = game.encode
-    # Create table if one does not exist, gameid is UNIQUE => No duplicates
-    db.exec "create table if not exists game_saves (
-        gameid string, turn integer, size integer, white_pass string, 
-        black_pass string, time string,  board string, UNIQUE(gameid) )"
     # If duplicate => replace values, else => make new row for gameid
     db.exec "insert or replace into game_saves values (?, ?, ?, ?, ?, ?, ?)", 
         gameid, turn.value, size, white_pass, black_pass, Time.now.to_json, board
@@ -244,8 +249,13 @@ end
 #         save_all(GAME_CACHE)
 #     end
 # end
+
+# If table does not exist, build it
+make_table(GAME_DB)
+# Remove games that are older than 24hrs
 game_cleaner(GAME_DB, GAME_CACHE)
 Kemal.run
+
 # If exit is disabled in kemal.stop
 # For save on close
 # at_exit do
